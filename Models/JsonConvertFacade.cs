@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class JsonConvertFacade
+    public class JsonConvertFacade : IJsonConvertFacade
     {
         private JsonSerializerSettings settings;
 
@@ -25,7 +25,7 @@ namespace Models
             return JsonConvert.SerializeObject(objectToSerialize, settings);
         }
 
-        public T? Deserialize<T>(string stringToDeserialize) 
+        public T? Deserialize<T>(string stringToDeserialize)
         {
             return JsonConvert.DeserializeObject<T>(stringToDeserialize, settings);
         }

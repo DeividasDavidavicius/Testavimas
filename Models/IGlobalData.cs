@@ -11,7 +11,7 @@ namespace ProjServer
         public bool ContainsGameSessionByPlayerId(string playerId);
         public bool ContainsPlayer(string id);
         public GameSession? FindGameSessionByCode(string id);
-        public GameSession? FindGameSessionByPlayerId(string playerId);
+        public IGameSession? FindGameSessionByPlayerId(string playerId);
         public Player? FindPlayer(string id);
         public void RemoveGameSessionByCode(string id);
         public void RemoveGameSessionByPlayerId(string playerId);

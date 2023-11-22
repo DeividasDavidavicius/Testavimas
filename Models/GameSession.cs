@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class GameSession : ISubject
+    public class GameSession : ISubject, IGameSession
     {
         public string sessionCode { get; set; }
         public List<Player> players { get; set; }

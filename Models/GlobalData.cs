@@ -26,7 +26,7 @@ namespace ProjServer
             return playerGameSessionDict.ContainsKey(playerId);
         }
 
-        public GameSession? FindGameSessionByPlayerId(string playerId)
+        public IGameSession? FindGameSessionByPlayerId(string playerId)
         {
             if (!playerGameSessionDict.ContainsKey(playerId))
             {

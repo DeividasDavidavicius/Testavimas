@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Models.Observer
 {
-    internal interface ISubject
+    public interface ISubject
     {
         void Attach(IObserver observer);
         void Detach(IObserver observer);

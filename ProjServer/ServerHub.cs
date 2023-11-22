@@ -10,12 +10,15 @@ namespace ProjServer
 {
     public class ServerHub : Hub<IGameClient>
     {
-        public ServerHub(IGlobalData globalData)
+        public ServerHub(IGlobalData globalData, IJsonConvertFacade jsonConvertFacade)
         {
             this.globalData = globalData;
+            this.jsonConvert = jsonConvertFacade;
         }
 
         public IGlobalData globalData;
+
+        public IJsonConvertFacade jsonConvert;
 
         public override Task OnConnectedAsync()
         {
@@ -152,7 +155,7 @@ namespace ProjServer
             {
                 await Clients.Caller.BadRequest(403);
             }
-            GameSession? gameSession = globalData.FindGameSessionByCode(sessionCode);
+            IGameSession? gameSession = globalData.FindGameSessionByCode(sessionCode);
             if (gameSession == null)
             {
                 await Clients.Caller.BadRequest(404);
@@ -175,7 +178,7 @@ namespace ProjServer
                 return;
             }
             string userId = Context.ConnectionId;
-            GameSession? gameSession = globalData.FindGameSessionByPlayerId(userId);
+            GameSession? gameSession = (GameSession?)globalData.FindGameSessionByPlayerId(userId);
             Player? player = globalData.FindPlayer(userId);
             bool moveSuccessful = gameSession.ExecuteTurn(player, x, y, userId);
             if (!moveSuccessful)
@@ -197,7 +200,7 @@ namespace ProjServer
                 return;
             }
             string userId = Context.ConnectionId;
-            GameSession? gameSession = globalData.FindGameSessionByPlayerId(userId);
+            IGameSession? gameSession = globalData.FindGameSessionByPlayerId(userId);
             gameSession.UndoCommand();
             JsonConvertFacade jsonConvert = new JsonConvertFacade();
             string gameSessionJson = jsonConvert.Serialize(gameSession);
@@ -214,7 +217,7 @@ namespace ProjServer
 
             string userId = Context.ConnectionId;
             Player player = globalData.FindPlayer(userId);
-            GameSession gameSession = globalData.FindGameSessionByPlayerId(userId);
+            IGameSession gameSession = globalData.FindGameSessionByPlayerId(userId);
             bool success = gameSession.SetNewTurn(userId);
             if (!success)
             {
@@ -238,7 +241,6 @@ namespace ProjServer
                 }
             }
 
-            JsonConvertFacade jsonConvert = new JsonConvertFacade();
             string gameSessionJson = jsonConvert.Serialize(gameSession);
             await Clients.All.OnPlayerTurn(gameSessionJson);
         }
@@ -251,7 +253,7 @@ namespace ProjServer
             Player? player = globalData.FindPlayer(userId);
             if (player == null) return false;
 
-            GameSession? gameSession = globalData.FindGameSessionByPlayerId(userId);
+            IGameSession? gameSession = globalData.FindGameSessionByPlayerId(userId);
             if (gameSession == null) return false;
 
             return true;
