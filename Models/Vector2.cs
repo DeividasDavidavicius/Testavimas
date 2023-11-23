@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    internal class Vector2
+    public class Vector2
     {
         private int x;
         private int y;
@@ -21,7 +21,7 @@ namespace Models
             this.x = x;
         }
 
-        public void sety(int y)
+        public void setY(int y)
         {
             this.y = y;
         }

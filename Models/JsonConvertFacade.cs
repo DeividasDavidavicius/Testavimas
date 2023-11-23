@@ -10,7 +10,7 @@ namespace Models
 {
     public class JsonConvertFacade : IJsonConvertFacade
     {
-        private JsonSerializerSettings settings;
+        public JsonSerializerSettings settings;
 
         public JsonConvertFacade()
         {
