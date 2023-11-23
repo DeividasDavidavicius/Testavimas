@@ -131,7 +131,7 @@ namespace ProjServer
                 await Clients.Caller.BadRequest(403);
                 return;
             }
-            GameSession? gameSession = globalData.FindGameSessionByCode(sessionCode);
+            IGameSession? gameSession = globalData.FindGameSessionByCode(sessionCode);
             if (gameSession == null)
             {
                 await Clients.Caller.BadRequest(404);
@@ -141,10 +141,8 @@ namespace ProjServer
             globalData.AddPlayer(userId, player);
             globalData.AddGameSessionByPlayerId(userId, gameSession);
             gameSession.addPlayer(player);
-            JsonConvertFacade jsonConvert = new JsonConvertFacade();
             string gameSessionJson = jsonConvert.Serialize(gameSession);
             string newPlayerJson = jsonConvert.Serialize(player);
-            await Console.Out.WriteLineAsync(gameSessionJson.ToString());
             await Clients.All.OnNewPlayerConnectedToServer(newPlayerJson);
             await Clients.Caller.OnConnectToServer(gameSessionJson);
         }
@@ -161,7 +159,7 @@ namespace ProjServer
                 await Clients.Caller.BadRequest(404);
                 return;
             }
-            JsonConvertFacade jsonConvert = new JsonConvertFacade();
+
             string gameSessionJson = jsonConvert.Serialize(gameSession);
             await Console.Out.WriteLineAsync("GameSession \n" + gameSessionJson);
             await Clients.All.OnGameStart(gameSessionJson);
@@ -178,7 +176,7 @@ namespace ProjServer
                 return;
             }
             string userId = Context.ConnectionId;
-            GameSession? gameSession = (GameSession?)globalData.FindGameSessionByPlayerId(userId);
+            IGameSession? gameSession = globalData.FindGameSessionByPlayerId(userId);
             Player? player = globalData.FindPlayer(userId);
             bool moveSuccessful = gameSession.ExecuteTurn(player, x, y, userId);
             if (!moveSuccessful)
@@ -187,7 +185,6 @@ namespace ProjServer
                 return;
             }
 
-            JsonConvertFacade jsonConvert = new JsonConvertFacade();
             string gameSessionJson = jsonConvert.Serialize(gameSession);
             await Clients.Caller.OnPlayerAvailableEndTurn(gameSessionJson);
         }

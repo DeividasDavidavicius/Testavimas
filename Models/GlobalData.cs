@@ -5,13 +5,13 @@ namespace ProjServer
 {
     public class GlobalData : IGlobalData
     {
-        private static Dictionary<string, GameSession> gameSessionDict = new Dictionary<string, GameSession>();
+        private static Dictionary<string, IGameSession> gameSessionDict = new Dictionary<string, IGameSession>();
         private static Dictionary<string, Player> playerDict = new Dictionary<string, Player>();
-        private static Dictionary<string, GameSession> playerGameSessionDict = new Dictionary<string, GameSession>();
+        private static Dictionary<string, IGameSession> playerGameSessionDict = new Dictionary<string, IGameSession>();
 
         public GlobalData() { }
 
-        public bool AddGameSessionByPlayerId(string playerId, GameSession gameSession)
+        public bool AddGameSessionByPlayerId(string playerId, IGameSession gameSession)
         {
             if (playerGameSessionDict.ContainsKey(playerId))
             {
@@ -40,7 +40,7 @@ namespace ProjServer
             playerGameSessionDict.Remove(playerId);
         }
 
-        public bool AddGameSessionByCode(string id, GameSession gameSession)
+        public bool AddGameSessionByCode(string id, IGameSession gameSession)
         {
             if (gameSessionDict.ContainsKey(id))
             {
@@ -55,7 +55,7 @@ namespace ProjServer
             return gameSessionDict.ContainsKey(id);
         }
 
-        public GameSession? FindGameSessionByCode(string id)
+        public IGameSession? FindGameSessionByCode(string id)
         {
             if (!gameSessionDict.ContainsKey(id))
             {

@@ -183,7 +183,7 @@ namespace Tests
         }
 
         [TestMethod]
-        public async Task OnUndo_SetNewTurnSuccesful()
+        public async Task OnUndo_UndoTurnSuccesful()
         {
             // Arrange
             mockGlobalData.Setup(g => g.FindPlayer(It.IsAny<string>())).Returns(new Player());
@@ -197,6 +197,145 @@ namespace Tests
             // Assert
             mockClients.Verify(c => c.Caller.BadRequest(404), Times.Never);
             mockClients.Verify(c => c.All.OnPlayerTurn(It.IsAny<string>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void PlayerTurn_ValidUser_ReturnsFalse()
+        {
+            // Arrange
+            var mockContext = new Mock<HubCallerContext>();
+            mockContext.SetupGet(c => c.ConnectionId).Returns((string)null);
+            serverHub.Context = mockContext.Object;
+
+            // Act
+            var result = serverHub.PlayerTurn("2", "2");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task PlayerTurn_ExecutePlayerTurnUnsuccessful()
+        {
+            // Arrange
+            mockGlobalData.Setup(g => g.FindPlayer(It.IsAny<string>())).Returns(new Player());
+            mockGlobalData.Setup(g => g.FindGameSessionByPlayerId(It.IsAny<string>())).Returns(mockGameSession.Object);
+            mockGameSession.Setup(g => g.ExecuteTurn(It.IsAny<Player>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>())).Returns(false);
+            mockJsonConvert.Setup(j => j.Serialize(It.IsAny<GameSession>())).Returns("serializedGameSession");
+
+            // Act
+            await serverHub.PlayerTurn("2", "2");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Once);
+            mockClients.Verify(c => c.Caller.OnPlayerAvailableEndTurn(It.IsAny<string>()), Times.Never);
+        }
+
+        [TestMethod]
+        public async Task PlayerTurn_ExecutePlayerTurnSuccessful()
+        {
+            // Arrange
+            mockGlobalData.Setup(g => g.FindPlayer(It.IsAny<string>())).Returns(new Player());
+            mockGlobalData.Setup(g => g.FindGameSessionByPlayerId(It.IsAny<string>())).Returns(mockGameSession.Object);
+            mockGameSession.Setup(g => g.ExecuteTurn(It.IsAny<Player>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>())).Returns(true);
+            mockJsonConvert.Setup(j => j.Serialize(It.IsAny<GameSession>())).Returns("serializedGameSession");
+
+            // Act
+            await serverHub.PlayerTurn("2", "2");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Never);
+            mockClients.Verify(c => c.Caller.OnPlayerAvailableEndTurn(It.IsAny<string>()), Times.Once);
+        }
+
+        [TestMethod]
+        public void StartServer_ValidUser_ReturnsFalse()
+        {
+            // Arrange
+            var mockContext = new Mock<HubCallerContext>();
+            mockContext.SetupGet(c => c.UserIdentifier).Returns((string)null);
+            serverHub.Context = mockContext.Object;
+            mockGlobalData.Setup(g => g.FindGameSessionByPlayerId(It.IsAny<string>())).Returns<GameSession>(null);
+
+
+            // Act
+            var result = serverHub.StartServer("1");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task StartServer_SuccessfullyStartsServer()
+        {
+            // Arrange
+            var mockContext = new Mock<HubCallerContext>();
+            mockContext.SetupGet(c => c.UserIdentifier).Returns("123");
+            serverHub.Context = mockContext.Object;
+            mockGlobalData.Setup(g => g.FindPlayer(It.IsAny<string>())).Returns(new Player());
+            mockGlobalData.Setup(g => g.FindGameSessionByCode(It.IsAny<string>())).Returns(mockGameSession.Object);
+            mockGameSession.Setup(g => g.ExecuteTurn(It.IsAny<Player>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>())).Returns(true);
+            mockJsonConvert.Setup(j => j.Serialize(It.IsAny<GameSession>())).Returns("serializedGameSession");
+
+            // Act
+            await serverHub.StartServer("2");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Never);
+            mockClients.Verify(c => c.All.OnGameStart(It.IsAny<string>()), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task JoinServer_DoesntFindUser()
+        {
+            // Arrange
+            var mockContext = new Mock<HubCallerContext>();
+            mockContext.SetupGet(c => c.ConnectionId).Returns((string)null);
+            serverHub.Context = mockContext.Object;
+
+            // Act
+            await serverHub.JoinServer("2", "5");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(403), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task JoinServer_DoesntFindGameSession()
+        {
+            // Arrange
+            var mockContext = new Mock<HubCallerContext>();
+            mockContext.SetupGet(c => c.ConnectionId).Returns("123");
+            serverHub.Context = mockContext.Object;
+            mockGlobalData.Setup(g => g.FindPlayer(It.IsAny<string>())).Returns(new Player());
+            mockGlobalData.Setup(g => g.FindGameSessionByCode(It.IsAny<string>())).Returns((GameSession)null);
+
+            // Act
+            await serverHub.JoinServer("2", "5");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task JoinServer_SuccessfullyJoinsServer()
+        {
+            // Arrange
+            var mockContext = new Mock<HubCallerContext>();
+            mockContext.SetupGet(c => c.ConnectionId).Returns("123");
+            serverHub.Context = mockContext.Object;
+            mockGlobalData.Setup(g => g.FindPlayer(It.IsAny<string>())).Returns(new Player());
+            mockGlobalData.Setup(g => g.FindGameSessionByCode(It.IsAny<string>())).Returns(mockGameSession.Object);
+            mockGameSession.Setup(g => g.ExecuteTurn(It.IsAny<Player>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>())).Returns(true);
+            mockJsonConvert.Setup(j => j.Serialize(It.IsAny<GameSession>())).Returns("serializedGameSession");
+
+            // Act
+            await serverHub.JoinServer("2", "5");
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(403), Times.Never);
+            mockClients.Verify(c => c.All.OnNewPlayerConnectedToServer(It.IsAny<string>()), Times.Once);
+            mockClients.Verify(c => c.Caller.OnConnectToServer(It.IsAny<string>()), Times.Once);
         }
     }
 }

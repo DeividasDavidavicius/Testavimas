@@ -213,21 +213,21 @@ namespace Game
             return currentPlayerId == player.id;
         }
 
-        public Vector2 GetCoords(MouseEventArgs e)
+        public Models.Vector2 GetCoords(MouseEventArgs e)
         {
             return GetCellByCoordinates(e.X, e.Y);
         }
 
-        private Vector2 GetCellByCoordinates(int xCoordinate, int yCoordinate)
+        private Models.Vector2 GetCellByCoordinates(int xCoordinate, int yCoordinate)
         {
             int x = xCoordinate / grid.cellSize;
             int y = yCoordinate / grid.cellSize;
 
             if (x >= 0 && x < grid.gridSize && y >= 0 && y < grid.gridSize)
             {
-                return new Vector2(x, y);
+                return new Models.Vector2(x, y);
             }
-            return new Vector2(-1, -1);
+            return new Models.Vector2(-1, -1);
         }
 
         public List<string> GetCommandList()
