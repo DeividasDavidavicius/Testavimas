@@ -118,5 +118,23 @@ namespace Tests
             // Assert
             Assert.IsTrue(grid.gridState[2,2].GetType() == typeof(EmptyCell));
         }
+
+        [TestMethod]
+        public void MoveStrategy_MoveEnemyFail()
+        {
+            // Arrange
+            MoveStrategy strategy = new MoveStrategy();
+            Cell[,] gridState = new Cell[1, 1];
+            Grid grid = new Grid(1, 1, gridState, 2);
+
+            EnemyCell enemyCell = new EnemyCell();
+            gridState[0, 0] = enemyCell;
+
+            // Act
+            strategy.ExecuteAction(grid, enemyCell, 0, 0);
+
+            // Assert
+            Assert.IsTrue(grid.gridState[0, 0].GetType() == typeof(EnemyCell));
+        }
     }
 }

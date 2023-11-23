@@ -1,8 +1,10 @@
 ﻿using Models.Strategy;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace Models.Cells
 {
+    [ExcludeFromCodeCoverage]
     public class EnemyCell : EntityCell, IPrototype<EnemyCell>
     {
         private IStrategy _strategy;

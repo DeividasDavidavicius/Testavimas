@@ -1,8 +1,10 @@
 ﻿using Models.Commands;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 
 namespace Models.Cells
 {
+    [ExcludeFromCodeCoverage]
     public class ObstacleCell : Cell
     {
         public ObstacleCell() : base(Color.Black)

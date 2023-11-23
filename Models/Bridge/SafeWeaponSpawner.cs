@@ -65,7 +65,7 @@ namespace Models.Bridge
                 WeaponCell weapon = new WeaponCell(color, damage, session);
                 grid.gridState[emptyCellsX[randomCellNumber], emptyCellsY[randomCellNumber]] = weapon;
 
-                session.Attach(weapon);
+                //session.Attach(weapon);
             }
         }
     }

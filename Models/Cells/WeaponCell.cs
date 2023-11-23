@@ -2,6 +2,7 @@
 using Models.Observer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Models.Cells
 {
+    [ExcludeFromCodeCoverage]
     public class WeaponCell : Cell, IObserver
     {
         public int damagePoints;
