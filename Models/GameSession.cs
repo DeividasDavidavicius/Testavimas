@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    [ExcludeFromCodeCoverage]
     public class GameSession : ISubject, IGameSession
     {
 
@@ -136,7 +135,7 @@ namespace Models
             moveAvailable = true;
             return command.Undo();
         }
-
+        [ExcludeFromCodeCoverage]
         public void CloneEnemies()
         {
             Random random = new Random();
@@ -182,7 +181,6 @@ namespace Models
             weakWeapon.SpawnWeapon();
             strongWeapon.SpawnWeapon();
         }
-
         public void ExecuteEnemies()
         {
             Random random = new Random();
