@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Models.Strategy
 {
-    class MoveStrategy : IStrategy
+    public class MoveStrategy : IStrategy
     {
         public void ExecuteAction(Grid grid, EnemyCell cell, int x, int y)
         {
