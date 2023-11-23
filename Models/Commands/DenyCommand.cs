@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Models.Commands
 {
-    internal class DenyCommand : ICommand
+    public class DenyCommand : ICommand
     {
         public bool Execute()
         {

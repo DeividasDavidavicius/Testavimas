@@ -1,5 +1,5 @@
 ﻿using Models.Cells;
-using Models.Strategy;
+using Models.Commands;
 using Models;
 using System;
 using System.Collections.Generic;
@@ -236,6 +236,7 @@ namespace Tests
             GlobalData data = new GlobalData();
             Player player = new Player();
             player.id = "23";
+
             // Act
             var result1 = data.AddPlayer(player.id, player);
             var result2 = data.AddPlayer(player.id, player);
@@ -252,6 +253,25 @@ namespace Tests
             Assert.AreNotEqual(result4, null);
             Assert.AreEqual(result5, null);
             Assert.IsFalse(result6);
+        }
+
+        [TestMethod]
+        public void DenyCommand_ReturnsCorrectValues()
+        {
+            // Arrange
+            DenyCommand command = new DenyCommand();
+
+            // Act
+            var result1 = command.Execute();
+            var result2 = command.AbleToExecute();
+            var result3 = command.Undo();
+            var result4 = command.CommandName();
+
+            // Assert
+            Assert.IsFalse(result1);
+            Assert.IsFalse(result2);
+            Assert.IsFalse(result3);
+            Assert.AreEqual(result4, "Deny move");
         }
     }
 }

@@ -166,5 +166,37 @@ namespace Tests
             mockClients.Verify(c => c.Caller.BadRequest(404), Times.Never);
             mockClients.Verify(c => c.All.OnPlayerTurn(It.IsAny<string>()), Times.Once);
         }
+
+        [TestMethod]
+        public void OnUndo_ValidUser_ReturnsFalse()
+        {
+            // Arrange
+            var mockContext = new Mock<HubCallerContext>();
+            mockContext.SetupGet(c => c.ConnectionId).Returns((string)null);
+            serverHub.Context = mockContext.Object;
+
+            // Act
+            var result = serverHub.OnUndo();
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task OnUndo_SetNewTurnSuccesful()
+        {
+            // Arrange
+            mockGlobalData.Setup(g => g.FindPlayer(It.IsAny<string>())).Returns(new Player());
+            mockGlobalData.Setup(g => g.FindGameSessionByPlayerId(It.IsAny<string>())).Returns(mockGameSession.Object);
+            mockGameSession.Setup(g => g.UndoCommand()).Returns(false);
+            mockJsonConvert.Setup(j => j.Serialize(It.IsAny<GameSession>())).Returns("serializedGameSession");
+
+            // Act
+            await serverHub.OnUndo();
+
+            // Assert
+            mockClients.Verify(c => c.Caller.BadRequest(404), Times.Never);
+            mockClients.Verify(c => c.All.OnPlayerTurn(It.IsAny<string>()), Times.Once);
+        }
     }
 }

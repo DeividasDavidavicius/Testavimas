@@ -202,7 +202,6 @@ namespace ProjServer
             string userId = Context.ConnectionId;
             IGameSession? gameSession = globalData.FindGameSessionByPlayerId(userId);
             gameSession.UndoCommand();
-            JsonConvertFacade jsonConvert = new JsonConvertFacade();
             string gameSessionJson = jsonConvert.Serialize(gameSession);
             await Clients.All.OnPlayerTurn(gameSessionJson);
         }
