@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Numerics;
 using System.Drawing;
 using Newtonsoft.Json;
+using ProjServer;
 
 namespace Tests
 {
@@ -177,6 +178,80 @@ namespace Tests
 
             // Assert
             Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public void GlobalData_ManagesGameSessionDataByPlayerCorrectly()
+        {
+            // Arrange
+            GlobalData data = new GlobalData();
+            Player player = new Player();
+            player.id = "5";
+            // Act
+            var result1 = data.AddGameSessionByPlayerId(player.id, new GameSession());
+            var result2 = data.AddGameSessionByPlayerId(player.id, new GameSession());
+            var result3 = data.ContainsGameSessionByPlayerId(player.id);
+            var result4 = data.FindGameSessionByPlayerId(player.id);
+            var result5 = data.FindGameSessionByPlayerId("21");
+            data.RemoveGameSessionByPlayerId(player.id);
+            var result6 = data.ContainsGameSessionByPlayerId(player.id);
+
+            // Assert
+            Assert.IsTrue(result1);
+            Assert.IsFalse(result2);
+            Assert.IsTrue(result3);
+            Assert.AreNotEqual(result4, null);
+            Assert.AreEqual(result5, null);
+            Assert.IsFalse(result6);
+        }
+
+        [TestMethod]
+        public void GlobalData_ManagesGameSessionDataByCodeCorrectly()
+        {
+            // Arrange
+            GlobalData data = new GlobalData();
+            var code = "0";
+            // Act
+            var result1 = data.AddGameSessionByCode(code, new GameSession());
+            var result2 = data.AddGameSessionByCode(code, new GameSession());
+            var result3 = data.ContainsGameSessionByCode(code);
+            var result4 = data.FindGameSessionByCode(code);
+            var result5 = data.FindGameSessionByCode("21");
+            data.RemoveGameSessionByCode(code);
+            var result6 = data.ContainsGameSessionByCode(code);
+
+            // Assert
+            Assert.IsTrue(result1);
+            Assert.IsFalse(result2);
+            Assert.IsTrue(result3);
+            Assert.AreNotEqual(result4, null);
+            Assert.AreEqual(result5, null);
+            Assert.IsFalse(result6);
+        }
+
+        [TestMethod]
+        public void GlobalData_ManagesPlayerDataCorrectly()
+        {
+            // Arrange
+            GlobalData data = new GlobalData();
+            Player player = new Player();
+            player.id = "23";
+            // Act
+            var result1 = data.AddPlayer(player.id, player);
+            var result2 = data.AddPlayer(player.id, player);
+            var result3 = data.ContainsPlayer(player.id);
+            var result4 = data.FindPlayer(player.id);
+            var result5 = data.FindPlayer("21");
+            data.RemovePlayer(player.id);
+            var result6 = data.ContainsPlayer(player.id);
+
+            // Assert
+            Assert.IsTrue(result1);
+            Assert.IsFalse(result2);
+            Assert.IsTrue(result3);
+            Assert.AreNotEqual(result4, null);
+            Assert.AreEqual(result5, null);
+            Assert.IsFalse(result6);
         }
     }
 }

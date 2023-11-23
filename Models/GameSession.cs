@@ -7,6 +7,7 @@ using Models.Observer;
 using Models.Strategy;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -15,6 +16,8 @@ using System.Threading.Tasks;
 
 namespace Models
 {
+    [ExcludeFromCodeCoverage]
+
     public class GameSession : ISubject, IGameSession
     {
         public string sessionCode { get; set; }

@@ -37,7 +37,7 @@ namespace ProjServer
 
         public void RemoveGameSessionByPlayerId(string playerId)
         {
-            gameSessionDict.Remove(playerId);
+            playerGameSessionDict.Remove(playerId);
         }
 
         public bool AddGameSessionByCode(string id, GameSession gameSession)
